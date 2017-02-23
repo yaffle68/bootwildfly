@@ -9,3 +9,6 @@ What, you don't have OpenShift 3 yet? Fix that immediately: www.openshift.org/vm
 
 
 
+
+
+
