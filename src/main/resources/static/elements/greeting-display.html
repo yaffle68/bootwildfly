@@ -1,0 +1,259 @@
+<!-- <link rel='import' href='js/bower_components/polymer/polymer.html'></link> -->
+
+<link rel="import" href="../js/bower_components/polymer/polymer.html">
+
+<!-- <link rel="import" -->
+<!-- 	href="https://polygit2.appspot.com/components/polymer/polymer.html"> -->
+
+<script src="../js/bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+
+<link rel="import"
+      href="../js/bower_components/iron-ajax/iron-ajax.html">
+<link rel="import"
+      href="../js/bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import"
+      href="../js/bower_components/iron-icons/maps-icons.html">
+<link rel="import" href="../js/bower_components/iron-list/iron-list.html">
+
+<link rel="import" href="../js/bower_components/iron-icon/iron-icon.html">
+<link rel="import"
+      href="../js/bower_components/iron-iconset-svg/iron-iconset-svg.html">
+
+<link rel="import"
+      href="../js/bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import"
+      href="../js/bower_components/iron-data-table/iron-data-table.html">
+
+<link rel="import"
+      href="../js/bower_components/paper-fab/paper-fab.html">
+
+<link rel="import"
+      href="../js/bower_components/paper-dialog/paper-dialog.html">
+
+<link rel="import"
+      href="../js/bower_components/paper-dialog-behavior/paper-dialog-shared-styles.html">
+
+<link rel="import" href="../js/bower_components/greenyouse-datetime-local-input/datetime-local-input.html">
+
+<dom-module id="greeting-display">
+    <template>
+
+
+        <style include="iron-flex iron-flex-alignment">
+div.bubble {
+	margin: 20px;
+	padding: 20px;
+	border-radius: 20px;
+	background-color: #eee;
+}
+
+paper-button.custom {
+    padding: 10px;
+}
+
+.add {
+    position: relative;
+    right: -80%;
+    -paper-fab-background: var(--paper-red-500);
+}
+
+
+        </style>
+
+
+        <iron-iconset-svg size="24" name="myicons">
+            <svg>
+                <defs>
+                    <g id="system-update-alt">
+                        <path d="M12 16.5l4-4h-3v-9h-2v9H8l4 4zm9-13h-6v1.99h6v14.03H3V5.49h6V3.5H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2v-14c0-1.1-.9-2-2-2z"></path>
+                    </g>
+                </defs>
+            </svg>
+            <svg>
+                <defs>
+                    <g id="attach-money">
+                        <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"></path>
+                    </g>
+                </defs>
+            </svg>
+            <svg>
+                <defs>
+                    <g id="add-box">
+                        <path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"></path>
+                    </g>
+                </defs>
+            </svg>
+        </iron-iconset-svg>
+
+
+        <iron-ajax id="myworker" auto url="../resource"
+                   handle-as="json" on-response="handleResponse" debounce-duration="300">
+        </iron-ajax>
+
+        <!--<iron-ajax id="stockpricefetcher" auto url="../stockprices"-->
+        <!--handle-as="json" on-response="handleResponseStockPrices" debounce-duration="300">-->
+        <!--</iron-ajax>-->
+
+        <iron-ajax id="stockpricefetcher" url="../stockprices" last-response="{{data}}" auto></iron-ajax>
+        <iron-ajax id="stockpriceadder" url="../stockprices" method="POST" content-type="application/json" handle-as="json" on-response="processPostResponse"></iron-ajax>
+
+
+        <div class="bubble horizontal wrap">
+
+            <h1>Stock Prices</h1>
+            <p>The ID is {{greetingid}}</p>
+            <p>The content is {{greetingcontent}}</p>
+            <p>
+                <paper-icon-button icon="myicons:system-update-alt" on-click="reload">Refresh</paper-icon-button>
+                Refresh
+            </p>
+
+
+            <!--           <p>StockPrices as iron-list:</p>
+                       <div>
+                           <iron-list items="[[data]]" as="item">
+                               <template>
+                                   <div class="horizontal wrap">
+                                       <span>
+                                           Symbol: [[item.symbol]]
+                                       </span>
+                                       <span>
+                                           Price: [[item.price]]
+                                       </span>
+                                       <span>
+                                           Change: [[item.change]]
+                                       </span>
+                                   </div>
+                               </template>
+                           </iron-list>
+                       </div>
+                       -->
+
+            <p>StockPrices as iron-data-table:</p>
+            <div>
+                <iron-data-table items="[[data]]" as="item">
+                    <data-table-column name="Symbol">
+                        <template>[[item.symbol]]</template>
+                    </data-table-column>
+                    <data-table-column name="Price">
+                        <template>[[item.price]]</template>
+                    </data-table-column>
+                    <data-table-column name="Change">
+                        <template>[[item.change]]</template>
+                    </data-table-column>
+                </iron-data-table>
+            </div>
+
+            <datetime-local-input value="{{fromTimestamp}}" id="fromDateTime" label="From" on-input="validateDates" error-message="DateTime is invalid!"
+                                  required auto-validate></datetime-local-input>
+            <datetime-local-input value="{{toTimestamp}}" id="toDateTime" label="To" on-input="validateDates" error-message="DateTime is invalid!" required
+                                  auto-validate></datetime-local-input>
+
+            <p>
+                <paper-icon-button icon="myicons:system-update-alt" on-click="loadStockPrices">Load Stock Prices
+                </paper-icon-button>
+                Reload Stock Prices
+            </p>
+
+            <paper-fab icon="add" class="add" onclick="addDialog.open()"></paper-fab>
+
+            <paper-dialog id="addDialog" entry-animation="fade-in-animation" class="dialog" modal="">
+                <h2>Add Item</h2>
+                <paper-input label="Stock Symbol" required="true" auto-validate=""
+                             error-message="required input!"></paper-input>
+                <div class="buttons">
+                    <paper-button class="custom" dialog-dismiss>Cancel</paper-button>
+                    <paper-button class="custom" dialog-confirm on-click="addNewStock">OK</paper-button>
+                </div>
+            </paper-dialog>
+
+
+            <!--
+                          <p>StockPrices as dom-repeat:</p>
+                          <template is="dom-repeat" items="{{data}}">
+                              <div class="horizontal wrap">
+                                  <span>Symbol: {{item.symbol}}</span>
+                                  <span>Price: {{item.price}}</span>
+                              </div>
+                          </template>
+              -->
+        </div>
+
+    </template>
+
+
+    <script>
+	// register a new element called proto-element
+	Polymer({
+		is : 'greeting-display',
+		properties : {
+			greetingid : String,
+			greetingcontent : String,
+			stockPrices : Array
+		},
+
+		validateDates : function() {
+		    var from = this.$.fromDateTime;
+		    var to = this.$.fromDateTime;
+		    var invalid = (from > to);
+		    console.info("Invalid: " + invalid);
+	  	    this.$.fromDateTime.invalid = invalid;
+		    this.$.toDateTime.invalid = invalid;
+		},
+
+		ready : function() {
+		    console.info("called ready");
+		    this.stockPrices = ["initial"];
+			this.$.myworker.generateRequest();
+		},
+
+		handleResponse : function(data) {
+			this.greetingid = data.detail.response.id;
+			this.greetingcontent = data.detail.response.content;
+		},
+
+		handleResponseStockPrices : function(data) {
+		    var theData = {
+
+		    };
+		     console.info("Stock Prices: " + data.detail.response);
+		     console.info("Stock Prices: " + typeof data.detail.response[0].symbol);
+		     this.stockPrices = theData;
+		},
+
+		processPostResponse : function(data) {
+		     console.info("Stock Prices: " + data.detail.response);
+		     console.info("Stock Prices: " + data.detail.response.symbol);
+		},
+
+		reload : function() {
+			this.$.myworker.generateRequest();
+		},
+
+		loadStockPrices : function() {
+		    console.info("called loadStockPrices");
+		    this.$.stockpricefetcher.generateRequest();
+		},
+
+		addNewStock : function() {
+		    this.$.stockpriceadder.body = JSON.stringify({ "from":this.$.fromDateTime.value, "to":this.$.toDateTime.value});
+		    this.$.stockpriceadder.generateRequest();
+		    window.alert("Add an item (do nothing for now!");
+		},
+
+		createRequest : function() {
+		    return JSON.stringify({ "from":this.$.fromDateTime.value, "to":this.$.toDateTime.value});
+		}
+	});
+
+
+
+    </script>
+</dom-module>
+
+
+
+
+
+
