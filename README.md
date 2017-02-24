@@ -9,7 +9,9 @@ What, you don't have OpenShift 3 yet? Fix that immediately: www.openshift.org/vm
 
 Application is currently deployed here:
 
-http://spring-boot-on-wildfly-spring-boot-on-wildfly.44fs.preview.openshiftapps.com/index.html
+[http://spring-boot-on-wildfly-spring-boot-on-wildfly.44fs.preview.openshiftapps.com/index.html](Deployed application)
+
+
 
 
 
